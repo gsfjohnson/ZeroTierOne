@@ -158,52 +158,72 @@ endif
 ifeq ($(CC_MACH),arm)
 	ZT_ARCHITECTURE=3
 	override DEFS+=-DZT_NO_TYPE_PUNNING
-	ZT_USE_ARM32_NEON_ASM_CRYPTO=1
+	ZT_USE_ARM32_NEON_ASM_CRYPTO=0
+	override CFLAGS+=-march=armv5 -mfloat-abi=soft -msoft-float -mno-unaligned-access -marm
+	override CXXFLAGS+=-march=armv5 -mfloat-abi=soft -msoft-float -mno-unaligned-access -marm
 endif
 ifeq ($(CC_MACH),armel)
 	ZT_ARCHITECTURE=3
 	override DEFS+=-DZT_NO_TYPE_PUNNING
-	ZT_USE_ARM32_NEON_ASM_CRYPTO=1
+	ZT_USE_ARM32_NEON_ASM_CRYPTO=0
+	override CFLAGS+=-march=armv5 -mfloat-abi=soft -msoft-float -mno-unaligned-access -marm
+	override CXXFLAGS+=-march=armv5 -mfloat-abi=soft -msoft-float -mno-unaligned-access -marm
 endif
 ifeq ($(CC_MACH),armhf)
 	ZT_ARCHITECTURE=3
 	override DEFS+=-DZT_NO_TYPE_PUNNING
-	ZT_USE_ARM32_NEON_ASM_CRYPTO=1
+	ZT_USE_ARM32_NEON_ASM_CRYPTO=0
+	override CFLAGS+=-march=armv5 -mfloat-abi=soft -msoft-float -mno-unaligned-access -marm
+	override CXXFLAGS+=-march=armv5 -mfloat-abi=soft -msoft-float -mno-unaligned-access -marm
 endif
 ifeq ($(CC_MACH),armv6)
 	ZT_ARCHITECTURE=3
 	override DEFS+=-DZT_NO_TYPE_PUNNING
-	ZT_USE_ARM32_NEON_ASM_CRYPTO=1
+	ZT_USE_ARM32_NEON_ASM_CRYPTO=0
+	override CFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
+	override CXXFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
 endif
 ifeq ($(CC_MACH),armv6l)
 	ZT_ARCHITECTURE=3
 	override DEFS+=-DZT_NO_TYPE_PUNNING
-	ZT_USE_ARM32_NEON_ASM_CRYPTO=1
+	ZT_USE_ARM32_NEON_ASM_CRYPTO=0
+	override CFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
+	override CXXFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
 endif
 ifeq ($(CC_MACH),armv6zk)
 	ZT_ARCHITECTURE=3
 	override DEFS+=-DZT_NO_TYPE_PUNNING
-	ZT_USE_ARM32_NEON_ASM_CRYPTO=1
+	ZT_USE_ARM32_NEON_ASM_CRYPTO=0
+	override CFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
+	override CXXFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
 endif
 ifeq ($(CC_MACH),armv6kz)
 	ZT_ARCHITECTURE=3
 	override DEFS+=-DZT_NO_TYPE_PUNNING
-	ZT_USE_ARM32_NEON_ASM_CRYPTO=1
+	ZT_USE_ARM32_NEON_ASM_CRYPTO=0
+	override CFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
+	override CXXFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
 endif
 ifeq ($(CC_MACH),armv7)
 	ZT_ARCHITECTURE=3
 	override DEFS+=-DZT_NO_TYPE_PUNNING
-	ZT_USE_ARM32_NEON_ASM_CRYPTO=1
+	ZT_USE_ARM32_NEON_ASM_CRYPTO=0
+	override CFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
+	override CXXFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
 endif
 ifeq ($(CC_MACH),armv7l)
 	ZT_ARCHITECTURE=3
 	override DEFS+=-DZT_NO_TYPE_PUNNING
-	ZT_USE_ARM32_NEON_ASM_CRYPTO=1
+	ZT_USE_ARM32_NEON_ASM_CRYPTO=0
+	override CFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
+	override CXXFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
 endif
 ifeq ($(CC_MACH),armv7hl)
 	ZT_ARCHITECTURE=3
 	override DEFS+=-DZT_NO_TYPE_PUNNING
-	ZT_USE_ARM32_NEON_ASM_CRYPTO=1
+	ZT_USE_ARM32_NEON_ASM_CRYPTO=0
+	override CFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
+	override CXXFLAGS+=-target armv6-linux-gnueabihf -mfloat-abi=hard
 endif
 ifeq ($(CC_MACH),arm64)
 	ZT_ARCHITECTURE=4
@@ -255,19 +275,6 @@ endif
 ifeq ($(ZT_OFFICIAL),1)
 	CORE_OBJS+=ext/misc/linux-old-glibc-compat.o
 	override LDFLAGS+=-Wl,--wrap=memcpy -static-libstdc++
-endif
-
-# ARM32 hell -- use conservative CFLAGS
-ifeq ($(ZT_ARCHITECTURE),3)
-	ifeq ($(shell if [ -e /usr/bin/dpkg ]; then dpkg --print-architecture; fi),armel)
-		override CFLAGS+=-march=armv5 -mfloat-abi=soft -msoft-float -mno-unaligned-access -marm
-		override CXXFLAGS+=-march=armv5 -mfloat-abi=soft -msoft-float -mno-unaligned-access -marm
-		ZT_USE_ARM32_NEON_ASM_CRYPTO=0
-	else
-		override CFLAGS+=-march=armv5 -mno-unaligned-access -marm -fexceptions
-		override CXXFLAGS+=-march=armv5 -mno-unaligned-access -marm -fexceptions
-		ZT_USE_ARM32_NEON_ASM_CRYPTO=0
-	endif
 endif
 
 # Build faster crypto on some targets
